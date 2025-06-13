@@ -1,4 +1,3 @@
-import os
 import time
 from datetime import datetime
 
@@ -20,10 +19,28 @@ def get_order_timestamp():
     return str(datetime.now())
 
 
-def GetBun():
+def get_bun():
     bun_type = input("What kind of bun would you like? ")
-    print("Selected bun: %s" % bun_type)
+    print(f"Selected bun: {bun_type}")
     return bun_type
+
+
+def get_meat():
+    meat_type = input("Enter the meat type: ")
+    print(f"Selected meat: {meat_type}")
+    return meat_type
+
+
+def get_sauce():
+    sauce = "ketchup and mustard"
+    sauce_ingredients = [s.strip() for s in sauce.split("and")]
+    return " and ".join(sauce_ingredients)
+
+
+def get_cheese():
+    cheese_type = input("What kind of cheese? ")
+    print(f"Adding {cheese_type} cheese to your burger")
+    return cheese_type
 
 
 def calculate_burger_price(ingredients_list):
@@ -35,42 +52,20 @@ def calculate_burger_price(ingredients_list):
     def sum_ingredients_recursive(ingredients):
         if not ingredients:
             return 0
-        current = ingredients[0]
-        rest = ingredients[1:]
-        price = INGREDIENT_PRICES.get(current, 0)
-        return price + sum_ingredients_recursive(rest)
+        return INGREDIENT_PRICES.get(ingredients[0], 0) + sum_ingredients_recursive(ingredients[1:])
 
     base_price = sum_ingredients_recursive(ingredients_list)
-    final_price = add_tax_recursive(base_price, 2)
-    return final_price
+    return add_tax_recursive(base_price, 2)
 
 
-def getMeat():
-    meat_type = input("Enter the meat type: ")
-    print("Selected meat: {}".format(meat_type))
-    return meat_type
-
-
-def GET_SAUCE():
-    sauce = "ketchup and mustard"
-    sauce_ingredients = [s.strip() for s in sauce.split("and")]
-    return " and ".join(sauce_ingredients)
-
-
-def get_cheese123():
-    x = input("What kind of cheese? ")
-    print(f"Adding {x} cheese to your burger")
-    return x
-
-
-def AssembleBurger():
+def assemble_burger():
     global BURGER_COUNT, last_burger
     BURGER_COUNT += 1
 
-    bun = GetBun()
-    meat = getMeat()
-    cheese = get_cheese123()
-    sauce = GET_SAUCE()
+    bun = get_bun()
+    meat = get_meat()
+    cheese = get_cheese()
+    sauce = get_sauce()
 
     ingredients = [bun, meat, cheese]
 
@@ -88,28 +83,25 @@ def AssembleBurger():
     last_burger = burger
     return burger
 
-def SaveBurger(burger, burger_count=None):
-    if burger_count is None:
-        burger_count = BURGER_COUNT
 
+def save_burger(burger):
     with open("/tmp/burger.txt", "w") as f:
         f.write(burger)
 
     with open("/tmp/burger_count.txt", "w") as f:
-        f.write(str(burger_count))
+        f.write(str(BURGER_COUNT))
 
     print("Burger saved to /tmp/burger.txt")
-    
-    
 
-def MAIN():
+
+def main():
     print("Welcome to the worst burger maker ever!")
     try:
-        burger = AssembleBurger()
-        SaveBurger(burger)
+        burger = assemble_burger()
+        save_burger(burger)
     except Exception as e:
         print("Error assembling burger:", e)
 
 
 if __name__ == "__main__":
-    MAIN()
+    main()
